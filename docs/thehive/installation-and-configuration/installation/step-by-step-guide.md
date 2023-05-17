@@ -50,7 +50,9 @@ Apache Cassandra is a scalable and high available database. TheHive supports the
 
             ```bash
             curl -fsSL https://www.apache.org/dist/cassandra/KEYS | sudo apt-key add -
-            echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
+           # echo "deb http://www.apache.org/dist/cassandra/debian 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list 
+           # https://issues.apache.org/jira/browse/CASSANDRA-17748 -> repository moved ->
+           echo "deb https://apache.jfrog.io/artifactory/cassandra-deb/ 311x main" | sudo tee -a /etc/apt/sources.list.d/cassandra.sources.list
             ```
 
         2. Install the package
@@ -113,18 +115,18 @@ Configure Cassandra by editing `/etc/cassandra/cassandra.yaml` file.
 # content from /etc/cassandra/cassandra.yaml
 
 cluster_name: 'thp'
-listen_address: 'xx.xx.xx.xx' # address for nodes
-rpc_address: 'xx.xx.xx.xx' # address for clients
+listen_address: 'xxx.xxx.xxx.xxx' # address for nodes
+rpc_address: 'xxx.xxx.xxx.xxx' # address for clients
 seed_provider:
     - class_name: org.apache.cassandra.locator.SimpleSeedProvider
       parameters:
           # Ex: "<ip1>,<ip2>,<ip3>"
-          - seeds: 'xx.xx.xx.xx' # self for the first node
+          - seeds: 'xxx.xxx.xxx.xxx' # self for the first node
 data_file_directories:
   - '/var/lib/cassandra/data'
 commitlog_directory: '/var/lib/cassandra/commitlog'
 saved_caches_directory: '/var/lib/cassandra/saved_caches'
-hints_directory: 
+hints_directory:
   - '/var/lib/cassandra/hints'
 ```
 
@@ -573,6 +575,12 @@ Update `db.storage` configuration part in `/etc/thehive/application.conf` accord
         ```
 
 ### Run
+
+Ensure file permissions are correct (else the service crash and fail)
+
+```bash
+chown thehive:thehive /opt/thp/ -R
+```
 
 Save configuration file and run the service:
 
